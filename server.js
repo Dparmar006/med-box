@@ -2,10 +2,7 @@
 const express = require("express");
 const { urlencoded } = require("body-parser");
 const app = express();
-let port = process.env.PORT;
 require("dotenv").config();
-
-console.log(process.env.PORT);
 
 // db config
 const mongoose = require("mongoose");
@@ -14,7 +11,7 @@ mongoose.connect(process.env.DB_STRING, {
   useUnifiedTopology: true,
 });
 const db = mongoose.connection;
-db.once("open", () => console.log("CONNECTED TO DB"));
+db.once("open", () => console.info("SUCCESS: CONNECTED TO DB"));
 db.on("error", () => console.error("ERROR: Can't connect to DB"));
 
 app.use(urlencoded({ extended: false }));

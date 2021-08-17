@@ -23,6 +23,10 @@ medRoutes.post("/", async (req, res) => {
     brandName: req.body.brandName,
     name: req.body.name,
     unit: req.body.unit,
+    price: req.body.price,
+    expDate: req.body.expDate,
+    mfgDate: req.body.mfgDate,
+    disease: req.body.disease,
     quantityAvailabe: req.body.quantityAvailabe,
     quantityImported: req.body.quantityImported,
   });
@@ -45,6 +49,18 @@ medRoutes.patch("/:id", getMedicine, async (req, res) => {
   }
   if (req.body.unit != null) {
     res.medicine.unit = req.body.unit;
+  }
+  if (req.body.price != null) {
+    res.medicine.price = req.body.price;
+  }
+  if (req.body.mfgDate != null) {
+    res.medicine.mfgDate = req.body.mfgDate;
+  }
+  if (req.body.expDate != null) {
+    res.medicine.expDate = req.body.expDate;
+  }
+  if (req.body.disease != null) {
+    res.medicine.disease = req.body.disease;
   }
   if (req.body.quantityAvailabe != null) {
     res.medicine.quantityAvailabe = req.body.quantityAvailabe;
@@ -79,7 +95,7 @@ async function getMedicine(req, res, next) {
     if (medicine == null) {
       return res
         .status(404)
-        .json({ success: false, msg: "Medicine did not found" });
+        .json({ success: false, msg: "Cannot find this medicine" });
     }
   } catch (error) {
     return res.status(500).json({ success: false, msg: error });
