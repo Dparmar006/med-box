@@ -1,9 +1,9 @@
 const express = require('express')
 const medRoutes = express.Router()
 const Medicines = require('../models/meds')
-
+const auth = require('../middlewares/auth')
 // GET meds
-medRoutes.get('/', async (req, res) => {
+medRoutes.get('/', auth, async (req, res) => {
   try {
     const medicines = await Medicines.find()
     res.status(200).json({ totalMedicines: medicines.length, medicines })
@@ -13,12 +13,12 @@ medRoutes.get('/', async (req, res) => {
 })
 
 // GET med/:id
-medRoutes.get('/:id', getMedicine, async (req, res) => {
-  res.json({ success: true, msg: res.medicine })
+medRoutes.get('/:id', [auth, getMedicine], async (req, res) => {
+  res.json({ success: true, medicine: res.medicine })
 })
 
 // POST med
-medRoutes.post('/', async (req, res) => {
+medRoutes.post('/', auth, async (req, res) => {
   const medicine = new Medicines({
     brandName: req.body.brandName,
     name: req.body.name,
@@ -32,15 +32,17 @@ medRoutes.post('/', async (req, res) => {
   })
 
   try {
-    const newMed = medicine.save()
-    res.status(201).json({ success: true, msg: 'Medicine added.' })
-  } catch (error) {
-    res.status(400).json({ success: false, msg: error })
+    const newMed = await medicine.save()
+    res
+      .status(201)
+      .json({ success: true, medicine: newMed, msg: 'Medicine added.' })
+  } catch (err) {
+    res.status(400).json({ success: false, msg: err.message })
   }
 })
 
 // PATCH med
-medRoutes.patch('/:id', getMedicine, async (req, res) => {
+medRoutes.patch('/:id', [auth, getMedicine], async (req, res) => {
   if (req.body.brandName != null) {
     res.medicine.brandName = req.body.brandName
   }
@@ -71,14 +73,18 @@ medRoutes.patch('/:id', getMedicine, async (req, res) => {
 
   try {
     const updatedMed = await res.medicine.save()
-    res.json({ success: true, msg: updatedMed })
+    res.json({
+      success: true,
+      medicine: updatedMed,
+      msg: 'Medicine updated successfully.'
+    })
   } catch (error) {
     res.status(400).json({ success: false, msg: error })
   }
 })
 
 // DEL med
-medRoutes.delete('/:id', getMedicine, async (req, res) => {
+medRoutes.delete('/:id', [auth, getMedicine], async (req, res) => {
   try {
     await res.medicine.remove()
     res.json({ success: true, msg: 'Medicine deleted' })
