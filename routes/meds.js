@@ -2,9 +2,30 @@ const express = require('express')
 const medRoutes = express.Router()
 const Medicines = require('../models/meds')
 const auth = require('../middlewares/auth')
+const mongoose = require('mongoose')
+
 // GET meds
 medRoutes.get('/', auth, async (req, res) => {
   try {
+    const { storeId } = req.body
+    if (storeId) {
+      if (!mongoose.isValidObjectId(storeId)) {
+        return res.status(400).json({
+          success: false,
+          msg:
+            'Please pass the valid storeId or remove body to retrive all stores.'
+        })
+      }
+      const medicines = await Medicines.find({
+        storeId: mongoose.Types.ObjectId(storeId)
+      })
+      return res.status(200).json({
+        success: true,
+        medicines,
+        msg: `Medicines for the store retrived successfully`
+      })
+    }
+
     const medicines = await Medicines.find()
     res.status(200).json({ totalMedicines: medicines.length, medicines })
   } catch (error) {
@@ -28,7 +49,8 @@ medRoutes.post('/', auth, async (req, res) => {
     mfgDate: req.body.mfgDate,
     disease: req.body.disease,
     quantityAvailabe: req.body.quantityAvailabe,
-    quantityImported: req.body.quantityImported
+    quantityImported: req.body.quantityImported,
+    storeId: req.body.storeId
   })
 
   try {
@@ -69,6 +91,9 @@ medRoutes.put('/:id', [auth, getMedicine], async (req, res) => {
   }
   if (req.body.quantityImported != null) {
     res.medicine.quantityImported = req.body.quantityImported
+  }
+  if (req.body.storeId != null) {
+    res.medicine.storeId = req.body.storeId
   }
 
   try {
