@@ -18,7 +18,7 @@ const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.TOKEN_KEY)
-    req.user = decoded
+    req.pharmacist = decoded
   } catch (err) {
     return res
       .status(401)

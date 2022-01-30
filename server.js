@@ -20,8 +20,10 @@ app.use(express.json())
 // routes
 const medRoutes = require('./routes/meds')
 const pharmacistsRoutes = require('./routes/pharmacist')
+const storeRoutes = require('./routes/stores')
 app.use('/medicines', medRoutes)
 app.use('/pharmacists', pharmacistsRoutes)
+app.use('/stores', storeRoutes)
 
 // SERVER
 app.get('/', (req, res) => res.send('Hello World!'))

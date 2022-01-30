@@ -41,8 +41,8 @@ medRoutes.post('/', auth, async (req, res) => {
   }
 })
 
-// PATCH med
-medRoutes.patch('/:id', [auth, getMedicine], async (req, res) => {
+// PUT med
+medRoutes.put('/:id', [auth, getMedicine], async (req, res) => {
   if (req.body.brandName != null) {
     res.medicine.brandName = req.body.brandName
   }

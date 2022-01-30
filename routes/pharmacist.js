@@ -4,6 +4,8 @@ const pharmacistsRoutes = express.Router()
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const auth = require('../middlewares/auth')
+const Stores = require('../models/stores')
+// const mongoose = require('mongoose')
 
 // POST /login
 pharmacistsRoutes.post('/login', async (req, res) => {
@@ -134,6 +136,32 @@ pharmacistsRoutes.delete('/:id', [auth, getPharmacist], async (req, res) => {
       .json({ success: true, msg: 'Pharmacist deleted successfully.' })
   } catch (err) {
     res.status(500).json({ success: false, msg: err.message })
+  }
+})
+
+pharmacistsRoutes.put('/:id', [auth, getPharmacist], async (req, res) => {
+  if (req.body.firstName != null) {
+    req.pharmacist.firstName = req.body.firstName
+  }
+  if (req.body.lastName != null) {
+    req.pharmacist.lastName = req.body.lastName
+  }
+  if (req.body.phoneNumber != null) {
+    req.pharmacist.phoneNumber = req.body.phoneNumber
+  }
+  if (req.body.numberOfMedicalStores != null) {
+    req.pharmacist.numberOfMedicalStores = req.body.numberOfMedicalStores
+  }
+
+  try {
+    const updatedPharmacist = await req.pharmacist.save()
+    res.json({
+      success: true,
+      medicine: updatedPharmacist,
+      msg: 'Pharmacist updated successfully.'
+    })
+  } catch (error) {
+    res.status(400).json({ success: false, msg: error })
   }
 })
 
