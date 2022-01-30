@@ -1,15 +1,15 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const medsSchema = mongoose.Schema(
   {
     brandName: {
       type: String,
-      required: true,
+      required: true
     },
     name: {
       type: String,
       unique: true,
-      required: true,
+      required: true
     },
     price: Number,
     unit: String,
@@ -18,8 +18,12 @@ const medsSchema = mongoose.Schema(
     disease: [String],
     quantityAvailabe: Number,
     quantityImported: Number,
+    storeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true
+    }
   },
-  { collection: "medicines" }
-);
+  { collection: 'medicines' }
+)
 
-module.exports = mongoose.model("Medicines", medsSchema);
+module.exports = mongoose.model('Medicines', medsSchema)
