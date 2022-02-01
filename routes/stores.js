@@ -21,7 +21,8 @@ storeRoutes.get('/', auth, async (req, res) => {
       })
       return res.status(200).json({
         success: true,
-        stores: stores,
+        totalStores: stores.length,
+        stores,
         msg: `Stores for the pharmacist retrived successfully`
       })
     }
