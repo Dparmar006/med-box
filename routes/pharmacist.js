@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const auth = require('../middlewares/auth')
 const Stores = require('../models/stores')
+const { infoLog } = require('../util/logs')
 // const mongoose = require('mongoose')
 
 // POST /login
@@ -34,7 +35,8 @@ pharmacistsRoutes.post('/login', async (req, res) => {
       )
 
       pharmacist.token = token
-      res.status(200).json({ success: true, pharmacist: pharmacist })
+      infoLog(`${pharmacist.email} just logged in.`)
+      return res.status(200).json({ success: true, pharmacist: pharmacist })
     } else {
       res
         .status(400)

@@ -3,13 +3,61 @@ const medRoutes = express.Router()
 const Medicines = require('../models/meds')
 const auth = require('../middlewares/auth')
 const mongoose = require('mongoose')
-const { getMedicines, getMedicine } = require('../controllers/meds')
+const { infoLog, errorLog } = require('../util/logs')
+const {
+  DATA_RETRIVED_SUCCESSFULLY,
+  SERVER_ERROR,
+  RESOURCE_NOT_FOUND
+} = require('../constants/messages')
 
-// GET meds
-medRoutes.get('/', auth, getMedicines)
+const getMedicines = async (req, res) => {
+  try {
+    const { storeId } = req.body
+    if (storeId) {
+      if (!mongoose.isValidObjectId(storeId)) {
+        return res.status(400).json({
+          success: false,
+          msg:
+            'Please pass the valid storeId or remove body to retrive all stores.'
+        })
+      }
+      const medicines = await Medicines.find({
+        storeId: mongoose.Types.ObjectId(storeId)
+      })
+      infoLog('Medicines for pharmacist retrived.')
+      return res.status(200).json({
+        totalMedicines: medicines.length,
+        ...DATA_RETRIVED_SUCCESSFULLY,
+        medicines
+      })
+    }
 
-// GET med/:id
-medRoutes.route('/:id').get(auth, getMedicine)
+    const medicines = await Medicines.find()
+    infoLog('All medicines retrived.')
+    res.status(200).json({
+      totalMedicines: medicines.length,
+      ...DATA_RETRIVED_SUCCESSFULLY,
+      medicines
+    })
+  } catch (error) {
+    res.status(500).json({ error: error, ...SERVER_ERROR })
+  }
+}
+
+const getMedicine = async (req, res) => {
+  try {
+    const medicine = await Medicines.findById(req.params.id)
+    if (!medicine) {
+      errorLog('Medicine not found.')
+      return res.status(404).json(RESOURCE_NOT_FOUND)
+    }
+    infoLog('Medicine found.')
+    return res.status(200).json({ ...DATA_RETRIVED_SUCCESSFULLY, medicine })
+  } catch (error) {
+    errorLog('Server error while retriving medicine.')
+    return res.status(500).json({ error, ...SERVER_ERROR })
+  }
+}
 
 // POST med
 medRoutes.post('/', auth, async (req, res) => {
@@ -37,7 +85,7 @@ medRoutes.post('/', auth, async (req, res) => {
 })
 
 // PUT med
-medRoutes.put('/:id', [auth, getMedicine], async (req, res) => {
+medRoutes.put('/:id', [auth, getMedicines], async (req, res) => {
   if (req.body.brandName != null) {
     res.medicine.brandName = req.body.brandName
   }
@@ -82,7 +130,7 @@ medRoutes.put('/:id', [auth, getMedicine], async (req, res) => {
 })
 
 // DEL med
-medRoutes.delete('/:id', [auth, getMedicine], async (req, res) => {
+medRoutes.delete('/:id', [auth, getMedicines], async (req, res) => {
   try {
     await res.medicine.remove()
     res.json({ success: true, msg: 'Medicine deleted' })
@@ -92,7 +140,7 @@ medRoutes.delete('/:id', [auth, getMedicine], async (req, res) => {
 })
 
 // middlewere
-// async function getMedicine (req, res, next) {
+// async function getMedicines (req, res, next) {
 //   let medicine
 //   try {
 //     medicine = await Medicines.findById(req.params.id)
@@ -108,4 +156,7 @@ medRoutes.delete('/:id', [auth, getMedicine], async (req, res) => {
 //   next()
 // }
 
-module.exports = medRoutes
+module.exports = {
+  getMedicine,
+  getMedicines
+}
