@@ -23,6 +23,7 @@ const medRoutes = require('./routes/meds')
 const pharmacistsRoutes = require('./routes/pharmacist')
 const storeRoutes = require('./routes/stores')
 const { infoLog, errorLog } = require('./util/logs')
+
 app.use('/medicines', medRoutes)
 app.use('/pharmacists', pharmacistsRoutes)
 app.use('/stores', storeRoutes)

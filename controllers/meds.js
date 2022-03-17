@@ -1,15 +1,16 @@
-const express = require('express')
-const medRoutes = express.Router()
 const Medicines = require('../models/meds')
-const auth = require('../middlewares/auth')
 const mongoose = require('mongoose')
 const { infoLog, errorLog } = require('../util/logs')
 const {
   DATA_RETRIVED_SUCCESSFULLY,
   SERVER_ERROR,
-  RESOURCE_NOT_FOUND
+  RESOURCE_NOT_FOUND,
+  RECORD_CREATED,
+  RECORD_UPDATED,
+  RECORD_DELETED
 } = require('../constants/messages')
 
+// GET meds
 const getMedicines = async (req, res) => {
   try {
     const { storeId } = req.body
@@ -43,7 +44,7 @@ const getMedicines = async (req, res) => {
     res.status(500).json({ error: error, ...SERVER_ERROR })
   }
 }
-
+// GET med
 const getMedicine = async (req, res) => {
   try {
     const medicine = await Medicines.findById(req.params.id)
@@ -58,9 +59,8 @@ const getMedicine = async (req, res) => {
     return res.status(500).json({ error, ...SERVER_ERROR })
   }
 }
-
 // POST med
-medRoutes.post('/', auth, async (req, res) => {
+const addMedicine = async (req, res) => {
   const medicine = new Medicines({
     brandName: req.body.brandName,
     name: req.body.name,
@@ -76,87 +76,49 @@ medRoutes.post('/', auth, async (req, res) => {
 
   try {
     const newMed = await medicine.save()
+    infoLog('Medicine added.')
     res
       .status(201)
-      .json({ success: true, medicine: newMed, msg: 'Medicine added.' })
-  } catch (err) {
-    res.status(400).json({ success: false, msg: err.message })
+      .json({ medicine: newMed, ...RECORD_CREATED, msg: 'Medicine added.' })
+  } catch (error) {
+    errorLog('Error occured while creating medicine.')
+    res.status(400).json({ error, ...SERVER_ERROR })
   }
-})
-
+}
 // PUT med
-medRoutes.put('/:id', [auth, getMedicines], async (req, res) => {
-  if (req.body.brandName != null) {
-    res.medicine.brandName = req.body.brandName
-  }
-  if (req.body.name != null) {
-    res.medicine.name = req.body.name
-  }
-  if (req.body.unit != null) {
-    res.medicine.unit = req.body.unit
-  }
-  if (req.body.price != null) {
-    res.medicine.price = req.body.price
-  }
-  if (req.body.mfgDate != null) {
-    res.medicine.mfgDate = req.body.mfgDate
-  }
-  if (req.body.expDate != null) {
-    res.medicine.expDate = req.body.expDate
-  }
-  if (req.body.disease != null) {
-    res.medicine.disease = req.body.disease
-  }
-  if (req.body.quantityAvailabe != null) {
-    res.medicine.quantityAvailabe = req.body.quantityAvailabe
-  }
-  if (req.body.quantityImported != null) {
-    res.medicine.quantityImported = req.body.quantityImported
-  }
-  if (req.body.storeId != null) {
-    res.medicine.storeId = req.body.storeId
-  }
-
+const updateMedicine = async (req, res) => {
   try {
-    const updatedMed = await res.medicine.save()
+    const updatedMed = await Medicines.findByIdAndUpdate(
+      req.params.id,
+      req.body
+    )
+    infoLog('Medicine updated.')
     res.json({
-      success: true,
       medicine: updatedMed,
+      ...RECORD_UPDATED,
       msg: 'Medicine updated successfully.'
     })
   } catch (error) {
-    res.status(400).json({ success: false, msg: error })
+    errorLog('Error occured while updating medicine.')
+    res.status(500).json({ error, ...SERVER_ERROR })
   }
-})
-
-// DEL med
-medRoutes.delete('/:id', [auth, getMedicines], async (req, res) => {
+}
+// DELETE med
+const deleteMedicine = async (req, res) => {
   try {
-    await res.medicine.remove()
-    res.json({ success: true, msg: 'Medicine deleted' })
+    await Medicines.findByIdAndDelete(req.params.id)
+    infoLog('Medicine deleted.')
+    res.status(202).json(RECORD_DELETED)
   } catch (error) {
-    res.status(500).json({ success: false, msg: error })
+    errorLog('Error occured while deleting medicine.')
+    res.status(500).json({ error, ...SERVER_ERROR })
   }
-})
-
-// middlewere
-// async function getMedicines (req, res, next) {
-//   let medicine
-//   try {
-//     medicine = await Medicines.findById(req.params.id)
-//     if (medicine == null) {
-//       return res
-//         .status(404)
-//         .json({ success: false, msg: 'Cannot find this medicine' })
-//     }
-//   } catch (error) {
-//     return res.status(500).json({ success: false, msg: error })
-//   }
-//   res.medicine = medicine
-//   next()
-// }
+}
 
 module.exports = {
   getMedicine,
-  getMedicines
+  getMedicines,
+  addMedicine,
+  updateMedicine,
+  deleteMedicine
 }

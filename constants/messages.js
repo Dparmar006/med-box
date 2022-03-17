@@ -20,7 +20,18 @@ module.exports = {
     responseType: 'RECORD_CREATED',
     message: 'Record created successfully.'
   },
-
+  // 202
+  RECORD_DELETED: {
+    success: true,
+    responseType: 'RECORD_DELETED',
+    message: 'Record deleted successfully.'
+  },
+  // 204
+  RECORD_UPDATED: {
+    success: true,
+    responseType: 'RECORD_UPDATED',
+    message: 'Record updated successfully.'
+  },
   // 500
   SERVER_ERROR: {
     success: false,
