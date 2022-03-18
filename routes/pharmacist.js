@@ -7,7 +7,7 @@ const auth = require('../middlewares/auth')
 const Stores = require('../models/stores')
 const { infoLog } = require('../util/logs')
 const {
-  loginController,
+  login,
   getPharmacists,
   addPharmacist,
   getPharmacist,
@@ -17,7 +17,7 @@ const {
 // const mongoose = require('mongoose')
 
 // POST /login
-pharmacistsRoutes.post('/login', loginController)
+pharmacistsRoutes.post('/login', login)
 
 // GET /pharmacists
 pharmacistsRoutes.get('/', auth, getPharmacists)
