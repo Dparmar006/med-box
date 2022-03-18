@@ -1,11 +1,11 @@
-const express = require('express')
 const mongoose = require('mongoose')
 const Stores = require('../models/stores')
 const {
   BAD_REQUEST,
   DATA_RETRIVED_SUCCESSFULLY,
   SERVER_ERROR,
-  RECORD_CREATED
+  RECORD_CREATED,
+  RECORD_DELETED
 } = require('../constants/messages')
 const { infoLog, errorLog } = require('../util/logs')
 
@@ -70,14 +70,52 @@ const addStore = async (req, res) => {
 
   try {
     const newStore = await store.save()
+    infoLog(`'${store.name}' store added.`)
     res.status(201).json({ ...RECORD_CREATED, store: newStore })
   } catch (error) {
+    errorLog('Error occured while adding store.')
     res.status(400).json({ error, ...BAD_REQUEST })
+  }
+}
+
+const updateStore = async (req, res) => {
+  try {
+    let updateReq = {
+      name: req.body.name,
+      ownerId: req.body.ownerId,
+      address: {
+        city: req.body.city,
+        landmark: req.body.landmark,
+        addressLine1: req.body.addressLine1,
+        addressLine2: req.body.addressLine2
+      }
+    }
+
+    const updatedStore = await Stores.findByIdAndUpdate(
+      req.params.id,
+      updateReq
+    )
+    infoLog(`store updated.`)
+    res.json(RECORD_CREATED)
+  } catch (error) {
+    errorLog('Error occured while updating store.')
+    res.status(400).json({ error, ...BAD_REQUEST })
+  }
+}
+
+const deleteStore = async (req, res) => {
+  try {
+    await Stores.findByIdAndDelete(req.params.id)
+    res.json(RECORD_DELETED)
+  } catch (error) {
+    res.status(500).json({ error, ...SERVER_ERROR })
   }
 }
 
 module.exports = {
   getStore,
   getStores,
-  addStore
+  addStore,
+  updateStore,
+  deleteStore
 }
