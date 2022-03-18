@@ -7,7 +7,17 @@ module.exports = {
     data: null,
     list: null
   },
-
+  WRONG_CREDENTIALS: {
+    success: false,
+    responseType: 'WRONG_CREDENTIALS',
+    message: 'Email or Password is wrong, Please try again.'
+  },
+  EMAIL_ALREADY_USED: {
+    success: false,
+    responseType: 'EMAIL_ALREADY_USED',
+    message:
+      'Email is already used, Please try with different email again or login.'
+  },
   // 200
   DATA_RETRIVED_SUCCESSFULLY: {
     success: true,
