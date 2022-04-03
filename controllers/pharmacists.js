@@ -14,6 +14,7 @@ const {
   RECORD_UPDATED
 } = require('../constants/messages')
 const { getStoresFromPharmacistId } = require('./stores')
+const { USER_TYPES } = require('../constants/userTypes')
 
 // POST /login
 
@@ -98,13 +99,15 @@ const addPharmacist = async (req, res) => {
       email: req.body.email.toLowerCase(),
       password: encryptedPassword,
       phoneNumber: req.body.phoneNumber,
-      numberOfMedicalStores: req.body.numberOfMedicalStores
+      numberOfMedicalStores: req.body.numberOfMedicalStores,
+      role: USER_TYPES.PHARMACIST
     })
 
     const token = jwt.sign(
       {
         pharmacistId: pharmacist._id,
-        email: req.body.email.toLowerCase()
+        email: req.body.email.toLowerCase(),
+        role: USER_TYPES.PHARMACIST
       },
       process.env.TOKEN_KEY,
       {

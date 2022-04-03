@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { USER_TYPES } = require('../constants/userTypes')
 
 const pharmacistsSchema = mongoose.Schema(
   {
@@ -30,6 +31,11 @@ const pharmacistsSchema = mongoose.Schema(
     },
     token: {
       type: String
+    },
+    role: {
+      type: Number,
+      default: USER_TYPES.PHARMACIST,
+      required: true
     }
   },
   { collection: 'pharmacists' }
