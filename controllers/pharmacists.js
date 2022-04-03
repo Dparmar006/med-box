@@ -13,6 +13,7 @@ const {
   RESOURCE_NOT_FOUND,
   RECORD_UPDATED
 } = require('../constants/messages')
+const { getStoresFromPharmacistId } = require('./stores')
 
 // POST /login
 
@@ -40,10 +41,12 @@ const login = async (req, res) => {
           expiresIn: '7d'
         }
       )
-
+      const store = await getStoresFromPharmacistId(pharmacist.id)
       pharmacist.token = token
       infoLog(`${pharmacist.email} just logged in.`)
-      return res.status(200).json({ success: true, pharmacist: pharmacist })
+      return res
+        .status(200)
+        .json({ success: true, pharmacist: pharmacist, store })
     } else {
       res.status(400).json(WRONG_CREDENTIALS)
     }

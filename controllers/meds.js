@@ -61,26 +61,32 @@ const getMedicine = async (req, res) => {
 }
 // POST med
 const addMedicine = async (req, res) => {
-  const medicine = new Medicines({
-    brandName: req.body.brandName,
-    name: req.body.name,
-    unit: req.body.unit,
-    price: req.body.price,
-    expDate: req.body.expDate,
-    mfgDate: req.body.mfgDate,
-    disease: req.body.disease,
-    quantityAvailabe: req.body.quantityAvailabe,
-    quantityImported: req.body.quantityImported,
-    storeId: req.body.storeId
-  })
+  // const medicine = new Medicines({
+  //   brandName: req.body.brandName,
+  //   name: req.body.name,
+  //   unit: req.body.unit,
+  //   price: req.body.price,
+  //   expDate: req.body.expDate,
+  //   mfgDate: req.body.mfgDate,
+  //   disease: req.body.disease,
+  //   quantityAvailabe: req.body.quantityAvailabe,
+  //   quantityImported: req.body.quantityImported,
+  //   storeId: req.body.storeId
+  // })
 
   try {
-    const newMed = await medicine.save()
+    const response = await Medicines.insertMany(req.body.medicines, {
+      ordered: true
+    })
+    // const newMed = await medicine.save()
     infoLog('Medicine added.')
-    res
-      .status(201)
-      .json({ medicine: newMed, ...RECORD_CREATED, msg: 'Medicine added.' })
+    res.status(201).json({
+      medicines: response,
+      ...RECORD_CREATED,
+      msg: `${response?.length} Medicines added.`
+    })
   } catch (error) {
+    console.log(err)
     errorLog('Error occured while creating medicine.')
     res.status(400).json({ error, ...SERVER_ERROR })
   }

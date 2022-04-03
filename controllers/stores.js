@@ -39,6 +39,29 @@ const getStores = async (req, res) => {
   }
 }
 
+const getStoresFromPharmacistId = async pharmacistId => {
+  try {
+    if (pharmacistId) {
+      if (!mongoose.isValidObjectId(pharmacistId)) {
+        return res.status(400).json(BAD_REQUEST)
+      }
+      const stores = await Stores.findOne(
+        {
+          ownerId: mongoose.Types.ObjectId(pharmacistId)
+        },
+        { ownerId: false, __v: false }
+      )
+      infoLog('Store retrived.')
+      return stores
+    }
+    infoLog('Store retrived.')
+    return null
+  } catch (error) {
+    errorLog(error.message)
+    return null
+  }
+}
+
 const getStore = async (req, res) => {
   try {
     const store = await Stores.findById(req.params.id)
@@ -117,5 +140,6 @@ module.exports = {
   getStores,
   addStore,
   updateStore,
-  deleteStore
+  deleteStore,
+  getStoresFromPharmacistId
 }
