@@ -135,8 +135,9 @@ const getPharmacist = async (req, res) => {
     if (pharmacist === null) {
       return res.status(404).json(RESOURCE_NOT_FOUND)
     }
+    const store = await getStoresFromPharmacistId(req.params.id)
     infoLog('Pharmacist retrived.')
-    return res.status(200).json({ pharmacist, ...DATA_RETRIVED })
+    return res.status(200).json({ store, pharmacist, ...DATA_RETRIVED })
   } catch (error) {
     errorLog('Error occured while retriving pharmacist.')
     return res.status(500).json({ error, ...SERVER_ERROR })
