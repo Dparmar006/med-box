@@ -2,7 +2,7 @@ const express = require('express')
 const Pharmacists = require('../models/pharmacists')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const { infoLog, errorLog } = require('../util/logs')
+const { infoLog, errorLog, warnLog } = require('../util/logs')
 const {
   WRONG_CREDENTIALS,
   SERVER_ERROR,
@@ -21,6 +21,7 @@ const { USER_TYPES } = require('../constants/userTypes')
 const login = async (req, res) => {
   try {
     if (!(req.body.email && req.body.password)) {
+      warnLog('Password and email are required.')
       return res
         .status(400)
         .json({ success: false, msg: 'Password and Email are required.' })
@@ -49,7 +50,8 @@ const login = async (req, res) => {
         .status(200)
         .json({ success: true, pharmacist: pharmacist, store })
     } else {
-      res.status(400).json(WRONG_CREDENTIALS)
+      errorLog('User tried to login with wrong credentials.')
+      return res.status(400).json(WRONG_CREDENTIALS)
     }
   } catch (error) {
     errorLog('Error occured while logging in.')

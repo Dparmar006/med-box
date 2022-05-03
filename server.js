@@ -9,7 +9,8 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 mongoose.connect(process.env.DB_STRING, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useCreateIndex: true
 })
 const db = mongoose.connection
 db.once('open', () => infoLog('SUCCESS: CONNECTED TO DB'))
@@ -23,13 +24,14 @@ const medRoutes = require('./routes/meds')
 const pharmacistsRoutes = require('./routes/pharmacist')
 const storeRoutes = require('./routes/stores')
 const { infoLog, errorLog } = require('./util/logs')
+const transactionRoutes = require('./routes/transactions')
 
 app.use('/medicines', medRoutes)
 app.use('/pharmacists', pharmacistsRoutes)
 app.use('/stores', storeRoutes)
+app.use('/transactions', transactionRoutes)
 
 // SERVER
-app.get('/', (req, res) => res.send('Hello World!'))
 app.listen(process.env.PORT, () =>
   infoLog(`App listening on port ${process.env.PORT}!`)
 )
