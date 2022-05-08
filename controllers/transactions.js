@@ -1,4 +1,5 @@
 const Transactions = require('../models/transactions')
+const Medicines = require('../models/meds')
 const mongoose = require('mongoose')
 const { infoLog, errorLog } = require('../util/logs')
 const {
@@ -25,7 +26,7 @@ const getTransactions = async (req, res) => {
       }
       const transactions = await Transactions.find({
         storeId: mongoose.Types.ObjectId(storeId)
-      })
+      }).sort({ createdAt: -1 })
       infoLog('Transactions for store retrived.')
       return res.status(200).json({
         totalTransactions: transactions.length,
@@ -34,7 +35,7 @@ const getTransactions = async (req, res) => {
       })
     }
 
-    const transactions = await Transactions.find()
+    const transactions = await Transactions.find().sort({ createdAt: -1 })
     infoLog('All transactions retrived.')
     res.status(200).json({
       totalTransactions: transactions.length,
@@ -68,6 +69,9 @@ const addTransaction = async (req, res) => {
     if (medicines && medicines.length > 0) {
       medicines.map(med => {
         total = med.price * med.quantity + total
+        Medicines.findByIdAndUpdate(med.medicineId, {
+          $inc: { quantityAvailabe: med.quantity * -1 }
+        }).exec()
       })
     } else {
       return res.status(400).json({ ...BAD_REQUEST })

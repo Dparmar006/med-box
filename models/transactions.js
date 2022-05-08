@@ -33,6 +33,10 @@ const transactionSchema = mongoose.Schema({
     ],
     required: true
   },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
   total: {
     type: Number
   }

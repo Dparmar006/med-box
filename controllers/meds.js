@@ -61,21 +61,37 @@ const getMedicine = async (req, res) => {
 }
 // POST med
 const addMedicine = async (req, res) => {
-  // const medicine = new Medicines({
-  //   brandName: req.body.brandName,
-  //   name: req.body.name,
-  //   unit: req.body.unit,
-  //   price: req.body.price,
-  //   expDate: req.body.expDate,
-  //   mfgDate: req.body.mfgDate,
-  //   disease: req.body.disease,
-  //   quantityAvailabe: req.body.quantityAvailabe,
-  //   quantityImported: req.body.quantityImported,
-  //   storeId: req.body.storeId
-  // })
-
+  const medicine = new Medicines({
+    brandName: req.body.brandName,
+    name: req.body.name,
+    unit: req.body.unit,
+    price: req.body.price,
+    expDate: req.body.expDate,
+    mfgDate: req.body.mfgDate,
+    disease: req.body.disease,
+    quantityAvailabe: req.body.quantityAvailabe,
+    quantityImported: req.body.quantityImported,
+    storeId: req.body.storeId
+  })
   try {
-    const response = await Medicines.insertMany(req.body.medicines, {
+    let cookingMeds = []
+    req.body.map(med => {
+      cookingMeds.push(
+        new Medicines({
+          brandName: med.brandName,
+          name: med.name,
+          unit: med.unit,
+          price: med.price,
+          expDate: med.expDate,
+          mfgDate: med.mfgDate,
+          disease: med.disease,
+          quantityAvailable: med.quantityAvailable,
+          quantityImported: med.quantityImported,
+          storeId: med.storeId
+        })
+      )
+    })
+    const response = await Medicines.insertMany(cookingMeds, {
       ordered: true
     })
     // const newMed = await medicine.save()
@@ -86,8 +102,7 @@ const addMedicine = async (req, res) => {
       msg: `${response?.length} Medicines added.`
     })
   } catch (error) {
-    console.log(err)
-    errorLog('Error occured while creating medicine.')
+    errorLog('Error occured while creating medicine.' + error)
     res.status(400).json({ error, ...SERVER_ERROR })
   }
 }

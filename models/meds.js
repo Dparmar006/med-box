@@ -16,7 +16,7 @@ const medsSchema = mongoose.Schema(
     mfgDate: { type: Date, default: null },
     expDate: { type: Date, default: null },
     disease: [String],
-    quantityAvailabe: Number,
+    quantityAvailable: Number,
     quantityImported: Number,
     quantityThreshhold: { type: Number, required: true, default: 20 },
     dateThreshhold: {
