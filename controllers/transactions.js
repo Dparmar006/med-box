@@ -12,7 +12,7 @@ const {
   BAD_REQUEST
 } = require('../constants/messages')
 
-// GET meds
+// POST meds
 const getTransactions = async (req, res) => {
   try {
     const { storeId } = req.body

@@ -43,6 +43,7 @@ const login = async (req, res) => {
           expiresIn: '7d'
         }
       )
+
       const store = await getStoresFromPharmacistId(pharmacist.id)
       pharmacist.token = token
       infoLog(`${pharmacist.email} just logged in.`)

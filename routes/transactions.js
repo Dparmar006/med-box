@@ -9,8 +9,8 @@ const {
   deleteTransaction
 } = require('../controllers/transactions')
 
-// GET meds
-transactionRoutes.get('/', auth, getTransactions)
+// GET transactions
+transactionRoutes.post('/', auth, getTransactions)
 
 // GET med/:id
 transactionRoutes.route('/:id').get(auth, getTransaction)
