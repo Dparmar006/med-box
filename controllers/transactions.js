@@ -11,8 +11,9 @@ const {
   RECORD_DELETED,
   BAD_REQUEST
 } = require('../constants/messages')
+const sendInvoiceToCustomer = require('../email/invoice')
 
-// POST meds
+// GET transactions
 const getTransactions = async (req, res) => {
   try {
     const { storeId } = req.body
@@ -46,7 +47,7 @@ const getTransactions = async (req, res) => {
     res.status(500).json({ error: error, ...SERVER_ERROR })
   }
 }
-// GET med
+// GET transactions
 const getTransaction = async (req, res) => {
   try {
     const transaction = await Transactions.findById(req.params.id)
@@ -89,6 +90,10 @@ const addTransaction = async (req, res) => {
 
     const transactions = await transaction.save()
     // const newMed = await transaction.save()
+    sendInvoiceToCustomer({
+      to: req.body.email,
+      subject: `Here is your invoice for the medicines you bought ${req.body.name}`
+    })
     infoLog('Transaction added.')
     res.status(201).json({
       transactions,
