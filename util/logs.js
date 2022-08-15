@@ -1,5 +1,9 @@
-const errorLog = (msg = 'Something bad happened !') => {
-  console.log('\x1b[31m%s\x1b[0m', `\n  ☠️\t- ${msg}`)
+const errorLog = (msg = 'Something bad happened !', error = null) => {
+  console.log(
+    '\x1b[31m%s\x1b[0m',
+    `\n  ☠️\t- ${msg}`,
+    JSON.stringify(error, null, 2)
+  )
 }
 
 const infoLog = (msg = 'Some information !') => {
