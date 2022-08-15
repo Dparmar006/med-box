@@ -54,7 +54,9 @@ const getStoresFromPharmacistId = async pharmacistId => {
       infoLog('Store retrived.')
       return stores
     }
-    infoLog('Store retrived.')
+    errorLog(
+      'Could not retrive store, Please check pharmacist id passed into this'
+    )
     return null
   } catch (error) {
     errorLog(error.message)

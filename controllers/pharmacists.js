@@ -28,7 +28,6 @@ const login = async (req, res) => {
     }
 
     const pharmacist = await Pharmacists.findOne({ email: req.body.email })
-
     if (
       pharmacist &&
       (await bcrypt.compare(req.body.password, pharmacist.password))

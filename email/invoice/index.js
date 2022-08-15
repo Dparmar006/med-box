@@ -12,26 +12,13 @@ const sendInvoiceToCustomer = (
     from: process.env.NODEMAILER_EMAIL,
     subject: 'Invoice for your order numbered : XXX001',
     html: 'html'
-  }
+  },
+  data
 ) => {
   let userData = {
-    order: {
-      number: 001,
-      date: new Date().toDateString(),
-      total: 399
-    },
-    medicines: [
-      { name: 'Paracetamol 200', amount: 100, description: 'For fever' }
-    ],
-    customer: {
-      name: 'Dixit',
-      email: 'dparmar6698@gmail.com',
-      phone: '9727542759'
-    },
-    store: {
-      address: 'xyz street'
-    }
+    ...data
   }
+  console.log('-----------------\n ', userData)
   let filePath = path.join(__dirname, 'invoice.ejs')
 
   ejs.renderFile(filePath, { userData }, (err, data) => {

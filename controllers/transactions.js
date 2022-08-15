@@ -12,6 +12,7 @@ const {
   BAD_REQUEST
 } = require('../constants/messages')
 const sendInvoiceToCustomer = require('../email/invoice')
+const { getStoresFromPharmacistId } = require('./stores')
 
 // GET transactions
 const getTransactions = async (req, res) => {
@@ -78,6 +79,7 @@ const addTransaction = async (req, res) => {
       return res.status(400).json({ ...BAD_REQUEST })
     }
 
+    console.log(req.pharmacist)
     const transaction = new Transactions({
       customerName: req.body.name,
       customerEmail: req.body.email,
@@ -90,10 +92,27 @@ const addTransaction = async (req, res) => {
 
     const transactions = await transaction.save()
     // const newMed = await transaction.save()
-    sendInvoiceToCustomer({
-      to: req.body.email,
-      subject: `Here is your invoice for the medicines you bought ${req.body.name}`
-    })
+    const store = await getStoresFromPharmacistId(req.pharmacist.pharmacistId)
+    console.log(transaction)
+    console.log(' > ', transactions)
+    if (req.body.email) {
+      sendInvoiceToCustomer(
+        {
+          to: req.body.email,
+          subject: `Here is your invoice for the medicines ${req.body.name}`
+        },
+        {
+          medicines,
+          customer: { name: req.body.name, email: req.body.email },
+          store,
+          order: {
+            ...transactions._doc,
+            date: new Date(transaction.createdAt).toDateString()
+          }
+        }
+      )
+    }
+
     infoLog('Transaction added.')
     res.status(201).json({
       transactions,
@@ -101,7 +120,8 @@ const addTransaction = async (req, res) => {
       msg: `${transactions?.length} Transactions added.`
     })
   } catch (error) {
-    errorLog('Error occured while creating transaction.')
+    console.log(error)
+    errorLog('Error occured while creating transaction.', error)
     res.status(400).json({ error, ...SERVER_ERROR })
   }
 }

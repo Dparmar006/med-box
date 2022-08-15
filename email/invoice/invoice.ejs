@@ -551,7 +551,7 @@
                         >
                           <tr>
                             <td>
-                              <h3><%= userData.order.number %></h3>
+                              <h3>Order id : <%= userData.order._id %></h3>
                             </td>
                             <td>
                               <h3 class="align-right">
@@ -571,7 +571,7 @@
                                   <th class="purchase_heading" align="left">
                                     <p class="f-fallback">Name</p>
                                   </th>
-                                  
+
                                   <th class="purchase_heading" align="right">
                                     <p class="f-fallback">Amount</p>
                                   </th>
@@ -580,17 +580,17 @@
                                 <tr>
                                   <td width="40%" class="purchase_item">
                                     <span class="f-fallback"
-                                      ><%= ele.name %></span
+                                      ><%= ele.medicineName %></span
                                     >
-                                  </td> 
+                                  </td>
                                   <td
                                     class="align-right"
                                     width="20%"
                                     class="purchase_item"
                                   >
                                     <span class="f-fallback"
-                                      ><%= ele.amount %></span
-                                    >
+                                      ><%= ele.price %> X <%= ele.quantity %>
+                                    </span>
                                   </td>
                                 </tr>
                                 <% }) %>
@@ -626,7 +626,10 @@
                           <a href="https://medbox-app.web.app/">support team</a>
                           for help.
                         </p>
-                        <p>Cheers, <br />The Medbox team</p>
+                        <p>
+                          Cheers, <br />The <%= userData.store.name %> | Medbox
+                          team
+                        </p>
                         <!-- Action -->
                         <table
                           class="body-action"
@@ -704,10 +707,13 @@
                   <tr>
                     <td class="content-cell" align="center">
                       <p class="f-fallback sub align-center">
-                        Medbox
+                        <%= userData.store.name %> | Medbox
                         <br />
-                        <%= userData.store.address %> <br />
-                        <%= userData.store.city %>
+                        <%= userData.store.address.addressLine1 %>, <%=
+                        userData.store.address.addressLine2 %>, <%=
+                        userData.store.address.landmark %>
+                        <br />
+                        <%= userData.store.address.city %>
                       </p>
                     </td>
                   </tr>
