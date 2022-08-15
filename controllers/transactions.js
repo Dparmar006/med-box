@@ -79,7 +79,6 @@ const addTransaction = async (req, res) => {
       return res.status(400).json({ ...BAD_REQUEST })
     }
 
-    console.log(req.pharmacist)
     const transaction = new Transactions({
       customerName: req.body.name,
       customerEmail: req.body.email,
@@ -93,8 +92,7 @@ const addTransaction = async (req, res) => {
     const transactions = await transaction.save()
     // const newMed = await transaction.save()
     const store = await getStoresFromPharmacistId(req.pharmacist.pharmacistId)
-    console.log(transaction)
-    console.log(' > ', transactions)
+
     if (req.body.email) {
       sendInvoiceToCustomer(
         {

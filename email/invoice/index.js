@@ -8,8 +8,9 @@ const res = require('express/lib/response')
 
 const sendInvoiceToCustomer = (
   options = {
-    to: 'parmarkrunal09101@gmail.com',
-    from: process.env.NODEMAILER_EMAIL,
+    to: '',
+    from:
+      '"Example Team" <from@example.com>' || 'Display Name <email@address.com>',
     subject: 'Invoice for your order numbered : XXX001',
     html: 'html'
   },
@@ -18,14 +19,17 @@ const sendInvoiceToCustomer = (
   let userData = {
     ...data
   }
-  console.log('-----------------\n ', userData)
   let filePath = path.join(__dirname, 'invoice.ejs')
 
   ejs.renderFile(filePath, { userData }, (err, data) => {
     if (err) {
       errorLog(err)
     } else {
-      let emailOptions = { ...options, html: data }
+      let emailOptions = {
+        ...options,
+        from: process.env.NODEMAILER_EMAIL,
+        html: data
+      }
       transporter.sendMail(emailOptions, (err, info) => {
         if (err) return errorLog(err.message)
         infoLog(`Email sent to ${options.to}`, info.response)
