@@ -10,12 +10,12 @@ const {
 } = require('../controllers/transactions')
 
 // GET transactions
-transactionRoutes.post('/', auth, getTransactions)
+transactionRoutes.get('/', auth, getTransactions)
 
 // GET med/:id
 transactionRoutes.route('/:id').get(auth, getTransaction)
 
-// POST med
+// POST transactions
 transactionRoutes.route('/').post(auth, addTransaction)
 
 // PUT med
