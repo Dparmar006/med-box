@@ -49,7 +49,9 @@ app.set('view engine', 'html')
 
 const { Server } = require('socket.io')
 const socket = require('./socket')
-const io = new Server(server)
+const io = new Server(server, {
+  cors: { origin: '*' }
+})
 
 // io.on('connection', function (socket) {
 //   console.log('A user connected')
