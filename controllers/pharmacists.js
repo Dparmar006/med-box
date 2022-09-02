@@ -102,14 +102,14 @@ const addPharmacist = async (req, res) => {
       password: encryptedPassword,
       phoneNumber: req.body.phoneNumber,
       numberOfMedicalStores: req.body.numberOfMedicalStores,
-      role: USER_TYPES.PHARMACIST
+      role: req.body.role || USER_TYPES.PHARMACIST
     })
 
     const token = jwt.sign(
       {
         pharmacistId: pharmacist._id,
         email: req.body.email.toLowerCase(),
-        role: USER_TYPES.PHARMACIST
+        role: req.body.role || USER_TYPES.PHARMACIST
       },
       process.env.TOKEN_KEY,
       {
