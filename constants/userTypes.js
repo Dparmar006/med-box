@@ -2,7 +2,8 @@ module.exports = {
   USER_TYPES: {
     ADMIN: 1,
     PHARMACIST: 2,
-    PHARMACY_MANAGER: 3
+    PHARMACY_MANAGER: 3,
+    CUSTOMER: 4 
   },
 
   ADMIN_MODULES: [

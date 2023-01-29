@@ -17,6 +17,23 @@ const { getStoresFromPharmacistId } = require('./stores')
 // GET transactions
 const getTransactions = async (req, res) => {
   try {
+    const useFilter = (filter = req.query) => {
+      if (!filter) {
+        return {
+          page: 1,
+          limit: 20
+        }
+      }
+
+      let obj = {
+        page: 1,
+        limit: 20,
+        ...filter
+      }
+      return obj
+    }
+    const filter = useFilter(req.query)
+
     const { storeId } = req.body
     if (storeId) {
       if (!mongoose.isValidObjectId(storeId)) {
@@ -28,7 +45,10 @@ const getTransactions = async (req, res) => {
       }
       const transactions = await Transactions.find({
         storeId: mongoose.Types.ObjectId(storeId)
-      }).sort({ createdAt: -1 })
+      })
+        .sort({ createdAt: -1 })
+        .limit(filter.limit)
+        .skip(filter.limit * (filter.page - 1))
       infoLog('Transactions for store retrived.')
       return res.status(200).json({
         totalTransactions: transactions.length,
@@ -37,7 +57,10 @@ const getTransactions = async (req, res) => {
       })
     }
 
-    const transactions = await Transactions.find().sort({ createdAt: -1 })
+    const transactions = await Transactions.find()
+      .sort({ createdAt: -1 })
+      .limit(filter.limit)
+      .skip(filter.limit * (filter.page - 1))
     infoLog('All transactions retrived.')
     res.status(200).json({
       totalTransactions: transactions.length,

@@ -1,10 +1,13 @@
 // app config
+require('dotenv').config()
 const express = require('express')
 const { urlencoded } = require('body-parser')
 const app = express()
-require('dotenv').config()
 const cors = require('cors')
-const ejs = require('ejs')
+const path = require('path')
+const http = require('http')
+
+const server = http.createServer(app)
 
 // db config
 const mongoose = require('mongoose')
@@ -24,12 +27,12 @@ app.use(express.json())
 const medRoutes = require('./routes/meds')
 const pharmacistsRoutes = require('./routes/pharmacist')
 const storeRoutes = require('./routes/stores')
-const { infoLog, errorLog } = require('./util/logs')
+const cutsomerRoutes = require('./routes/customers')
 const transactionRoutes = require('./routes/transactions')
-const sendInvoiceToCustomer = require('./email/invoice')
-const path = require('path')
+const { infoLog, errorLog } = require('./util/logs')
 app.use('/medicines', medRoutes)
 app.use('/pharmacists', pharmacistsRoutes)
+app.use('/customers', cutsomerRoutes)
 app.use('/stores', storeRoutes)
 app.use('/transactions', transactionRoutes)
 
@@ -44,23 +47,28 @@ app.set('views', path.join(__dirname, 'email'))
 app.engine('html', require('ejs').renderFile)
 app.set('view engine', 'html')
 
-const templateData = {
-  customer: {
-    name: 'Archie'
-  },
-  store: {
-    address: 'Xyz street'
-  },
-  order: {
-    number: 12
-  }
-}
-
-app.get('/send-mail', (req, res) => {
-  sendInvoiceToCustomer()
-  res.send('Done')
+const { Server } = require('socket.io')
+const socket = require('./socket')
+const io = new Server(server, {
+  cors: { origin: '*' }
 })
+
+// io.on('connection', function (socket) {
+//   console.log('A user connected')
+
+//   //Whenever someone disconnects this piece of code executed
+//   socket.on('message', function (message) {
+//     console.log('He said: ' + message)
+//   })
+//   socket.on('disconnect', function () {
+//     console.log('A user disconnected')
+//   })
+// })
+socket(io)
 // SERVER
-app.listen(process.env.PORT, () =>
+server.listen(process.env.PORT, () =>
   infoLog(`App listening on port ${process.env.PORT}!`)
 )
+// app.listen(process.env.PORT, () =>
+//   infoLog(`App listening on port ${process.env.PORT}!`)
+// )

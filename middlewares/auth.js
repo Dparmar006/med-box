@@ -3,8 +3,11 @@ const {
   TOKEN_NOT_FOUND,
   UNAUTHORIZED_ACCESS
 } = require('../constants/messages')
+const { getPharmacistsStore } = require('../services/store.service')
+const { getPharmacist } = require('../services/pharmacists.service')
+const { errorLog } = require('../util/logs')
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
   let token = null
   token = req.body.token || req.headers['x-access-token']
 
@@ -22,9 +25,14 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.TOKEN_KEY)
-    req.pharmacist = decoded
+    const decoded =  jwt.verify(token, process.env.TOKEN_KEY)
+    req.pharmacist = await getPharmacist({ _id: decoded.pharmacistId })
+    req.store = await getPharmacistsStore({
+      ownerId: decoded.pharmacistId
+    })
   } catch (err) {
+    console.log(err)
+    errorLog("Authentication error: " , err)
     return res.status(401).json(UNAUTHORIZED_ACCESS)
   }
 
