@@ -13,7 +13,6 @@ const pharmacistsSchema = mongoose.Schema(
     },
     numberOfMedicalStores: {
       type: Number,
-      default: 1
     },
     createdAt: { type: Date, default: Date.now },
     email: {

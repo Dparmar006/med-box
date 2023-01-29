@@ -49,10 +49,12 @@ app.set('view engine', 'html')
 
 const { Server } = require('socket.io')
 const socket = require('./socket')
+const { notificationJob } = require('./services/medicines.service')
 const io = new Server(server, {
   cors: { origin: '*' }
 })
 
+notificationJob.start()
 // io.on('connection', function (socket) {
 //   console.log('A user connected')
 

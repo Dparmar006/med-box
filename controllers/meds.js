@@ -9,13 +9,14 @@ const {
   RECORD_UPDATED,
   RECORD_DELETED
 } = require('../constants/messages')
+const { USER_TYPES } = require('../constants/userTypes')
 
 // GET meds
 const getMedicines = async (req, res) => {
   try {
-    const { storeId } = req.body
-    if (storeId) {
-      if (!mongoose.isValidObjectId(storeId)) {
+
+    if(req.pharmacist.role == USER_TYPES.PHARMACIST){
+      if (!mongoose.isValidObjectId(req.store._id)) {
         return res.status(400).json({
           success: false,
           msg:
@@ -23,7 +24,7 @@ const getMedicines = async (req, res) => {
         })
       }
       const medicines = await Medicines.find({
-        storeId: mongoose.Types.ObjectId(storeId)
+        storeId: mongoose.Types.ObjectId(req.store._id)
       })
       infoLog('Medicines for pharmacist retrived.')
       return res.status(200).json({
@@ -32,6 +33,7 @@ const getMedicines = async (req, res) => {
         medicines
       })
     }
+ 
 
     const medicines = await Medicines.find()
     infoLog('All medicines retrived.')

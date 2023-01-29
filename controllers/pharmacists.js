@@ -87,7 +87,7 @@ const addPharmacist = async (req, res) => {
       res.status(400).json(BAD_REQUEST)
     }
 
-    const oldPharmacist = await Pharmacists.findOne({ email: req.body.email })
+    const oldPharmacist = await Pharmacists.findOne({ $or: [{email: req.body.email}, {phoneNumber: req.body.phoneNumber}]  })
 
     if (oldPharmacist) {
       return res.status(409).json(EMAIL_ALREADY_USED)
