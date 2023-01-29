@@ -16,7 +16,7 @@ module.exports = {
     success: false,
     responseType: 'EMAIL_ALREADY_USED',
     message:
-      'Email is already used, Please try with different email again or login.'
+      'Email or phone number is already used, Please try again or login.'
   },
   // 200
   DATA_RETRIVED_SUCCESSFULLY: {

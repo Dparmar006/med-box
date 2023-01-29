@@ -16,3 +16,16 @@ module.exports.getPharmacistsStore = async (
     errorLog('Error occured while retriving store of a user.' + error)
   }
 }
+
+module.exports.getAllStores = async (condition,
+  projection = { ownerId: false, __v: false }
+) => {
+  try {
+    return await stores.find(
+        condition,
+        projection
+      )
+  } catch (error) {
+    errorLog('Error occured while retriving all store.' + error)
+  }
+}
