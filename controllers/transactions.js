@@ -56,8 +56,7 @@ const getTransactions = async (req, res) => {
         ...DATA_RETRIVED_SUCCESSFULLY
       })
     }
-
-    const transactions = await Transactions.find()
+    const transactions = await Transactions.find({storeId: req.store._id})
       .sort({ createdAt: -1 })
       .limit(filter.limit)
       .skip(filter.limit * (filter.page - 1))

@@ -90,7 +90,7 @@ const addStore = async (req, res) => {
     name: req.body.name,
     address: address,
     phoneNumber: req.body.phoneNumber,
-    ownerId: req.pharmacist.pharmacistId
+    ownerId: req.pharmacist._id
   })
 
   try {

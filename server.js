@@ -55,22 +55,9 @@ const io = new Server(server, {
 })
 
 notificationJob.start()
-// io.on('connection', function (socket) {
-//   console.log('A user connected')
 
-//   //Whenever someone disconnects this piece of code executed
-//   socket.on('message', function (message) {
-//     console.log('He said: ' + message)
-//   })
-//   socket.on('disconnect', function () {
-//     console.log('A user disconnected')
-//   })
-// })
 socket(io)
 // SERVER
 server.listen(process.env.PORT, () =>
   infoLog(`App listening on port ${process.env.PORT}!`)
 )
-// app.listen(process.env.PORT, () =>
-//   infoLog(`App listening on port ${process.env.PORT}!`)
-// )
