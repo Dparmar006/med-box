@@ -26,10 +26,12 @@ const verifyToken = async (req, res, next) => {
 
   try {
     const decoded =  jwt.verify(token, process.env.TOKEN_KEY)
-    req.pharmacist = await getPharmacist({ _id: decoded.pharmacistId })
-    req.store = await getPharmacistsStore({
+    const pharmacist = await getPharmacist({ _id: decoded.pharmacistId })
+    req.pharmacist = pharmacist
+    const store = await getPharmacistsStore({
       ownerId: decoded.pharmacistId
     })
+    req.store = store 
   } catch (err) {
     console.log(err)
     errorLog("Authentication error: " , err)

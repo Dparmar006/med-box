@@ -24,7 +24,7 @@ const getMedicines = async (req, res) => {
         })
       }
       const medicines = await Medicines.find({
-        storeId: mongoose.Types.ObjectId(req.store._id)
+        storeId: req.store._id
       })
       infoLog('Medicines for pharmacist retrived.')
       return res.status(200).json({

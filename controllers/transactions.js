@@ -56,10 +56,11 @@ const getTransactions = async (req, res) => {
         ...DATA_RETRIVED_SUCCESSFULLY
       })
     }
-    const transactions = await Transactions.find({storeId: req.store._id})
-      .sort({ createdAt: -1 })
-      .limit(filter.limit)
-      .skip(filter.limit * (filter.page - 1))
+
+    const transactions = await Transactions.find({ storeId: req.store._id})
+    .sort({ createdAt: -1 })
+    .limit(filter.limit)
+    .skip(filter.limit * (filter.page - 1))
     infoLog('All transactions retrived.')
     res.status(200).json({
       totalTransactions: transactions.length,
@@ -85,7 +86,7 @@ const getTransaction = async (req, res) => {
     return res.status(500).json({ error, ...SERVER_ERROR })
   }
 }
-// POST med
+// POST transaction
 const addTransaction = async (req, res) => {
   try {
     let medicines = req.body.medicines
@@ -104,8 +105,8 @@ const addTransaction = async (req, res) => {
     const transaction = new Transactions({
       customerName: req.body.name,
       customerEmail: req.body.email,
-      pharmacistId: req.pharmacist.pharmacistId,
-      storeId: req.body.storeId,
+      pharmacistId: req.pharmacist._id,
+      storeId: req.store._id,
       customerPhone: req.body.phone,
       total: total,
       medicines
@@ -113,7 +114,7 @@ const addTransaction = async (req, res) => {
 
     const transactions = await transaction.save()
     // const newMed = await transaction.save()
-    const store = await getStoresFromPharmacistId(req.pharmacist.pharmacistId)
+    const store = await getStoresFromPharmacistId(req.pharmacist._id)
 
     if (req.body.email) {
       sendInvoiceToCustomer(
