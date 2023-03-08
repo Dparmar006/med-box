@@ -101,7 +101,7 @@ const addMedicine = async (req, res) => {
     res.status(201).json({
       medicines: response,
       ...RECORD_CREATED,
-      msg: `${response?.length} Medicines added.`
+      msg: `${response.length || 0} Medicines added.`
     })
   } catch (error) {
     errorLog('Error occured while creating medicine.' + error)
